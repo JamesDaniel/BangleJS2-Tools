@@ -1,5 +1,10 @@
 # Bangle.js 2 Tools & UI Studio
 
+[![Live Demo](https://img.shields.io/badge/Live%20App-GitHub%20Pages-38bdf8?style=for-the-badge&logo=github)](https://jamesdaniel.github.io/BangleJS2-Tools/)
+
+> 🚀 **Live Web App:** **[https://jamesdaniel.github.io/BangleJS2-Tools/](https://jamesdaniel.github.io/BangleJS2-Tools/)**  
+> *(Runs directly in your browser with full Web Bluetooth watch connectivity over HTTPS!)*
+
 A collection of developer tools and utilities for the **Bangle.js 2** open-source smartwatch, featuring a full **Visual UI Designer & Prototyping Studio** with an authentic 176×176 Memory LCD simulator, Espruino `Layout.js` engine, and Web Bluetooth direct-to-watch execution.
 
 ---
@@ -70,7 +75,14 @@ The **Bangle.js 2 UI Studio** is an interactive, browser-based visual designer b
 
 ## 🚀 Quick Start
 
-### Option 1: Zero-Dependency Python Server (Recommended)
+### Option 1: Live Web App (No Installation Needed)
+
+Open the hosted GitHub Pages application directly in Google Chrome, Microsoft Edge, or Opera:
+👉 **[https://jamesdaniel.github.io/BangleJS2-Tools/](https://jamesdaniel.github.io/BangleJS2-Tools/)**
+
+*(Because GitHub Pages serves over HTTPS, **Web Bluetooth** is available out of the box to pair directly to your physical watch).*
+
+### Option 2: Zero-Dependency Python Server (Local)
 
 Run the included launcher script:
 
@@ -82,12 +94,12 @@ python3 serve.py
 
 This will automatically start a local server on port `8080` and open `http://localhost:8080/ui-designer/index.html` in your default web browser.
 
-### Option 2: Open Directly in Browser
+### Option 3: Open Directly in Browser
 
-Simply open `ui-designer/index.html` directly in Google Chrome, Microsoft Edge, or Chromium:
+Simply open `index.html` or `ui-designer/index.html` directly in Google Chrome, Microsoft Edge, or Chromium:
 
 ```bash
-xdg-open ui-designer/index.html
+xdg-open index.html
 ```
 
 *(Note: Web Bluetooth requires an HTTPS or localhost origin, so use `./serve.py` when testing live Web Bluetooth uploading).*
