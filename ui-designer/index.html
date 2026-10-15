@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bangle.js 2 UI Designer & Studio</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+  <!-- Top App Navigation Bar -->
+  <header class="app-header">
+    <div class="logo-group">
+      <div class="watch-icon-badge">&#x231A;</div>
+      <div class="app-title">
+        <span>Bangle.js 2 UI Studio</span>
+        <span class="tag-version">176&times;176 LCD</span>
+      </div>
+    </div>
+
+    <!-- Mode switchers -->
+    <div class="toolbar-group">
+      <button id="btnModeLayout" class="btn-primary" title="Design with official Layout.js engine">Layout.js Designer</button>
+      <button id="btnModeMenu" class="btn-secondary" title="Design E.showMenu() graphical menus">Menu Builder</button>
+    </div>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+      <button id="btnOpenTemplatesModal" class="btn-secondary">
+        <span>&#x1F4CB;</span> Templates
+      </button>
+      <button id="btnOpenImportModal" class="btn-secondary">
+        <span>&#x1F4E5;</span> Import Code
+      </button>
+      <button id="btnRunBle" class="btn-primary" title="Connect over Bluetooth and upload live to your watch">
+        <span>&#x1F4F6;</span> Run on Watch (BLE)
+      </button>
+      <span id="bleStatusBadge" style="font-size: 11px; font-family: var(--font-mono); color: var(--text-muted); margin-left: 6px;">BLE Ready</span>
+    </div>
+  </header>
+
+  <!-- Main Studio Workspace -->
+  <main class="app-workspace">
+
+    <!-- Left Panel: Palette & Hierarchy Tree -->
+    <section class="panel left-panel">
+      <div class="panel-header">
+        <span>Component Palette</span>
+      </div>
+      <div class="panel-content" style="flex: 0 0 auto; max-height: 220px; border-bottom: 1px solid var(--border-color);">
+        <div class="palette-grid">
+          <button class="palette-btn" data-type="txt">
+            <span class="icon">&#x1F524;</span>
+            <span>Text</span>
+          </button>
+          <button class="palette-btn" data-type="btn">
+            <span class="icon">&#x1F518;</span>
+            <span>Button</span>
+          </button>
+          <button class="palette-btn" data-type="img">
+            <span class="icon">&#x1F5BC;</span>
+            <span>Icon / Img</span>
+          </button>
+          <button class="palette-btn" data-type="h">
+            <span class="icon">&#x2194;</span>
+            <span>Row (H)</span>
+          </button>
+          <button class="palette-btn" data-type="v">
+            <span class="icon">&#x2195;</span>
+            <span>Column (V)</span>
+          </button>
+          <button class="palette-btn" data-type="space">
+            <span class="icon">&#x2337;</span>
+            <span>Spacer</span>
+          </button>
+          <button class="palette-btn" data-type="custom" style="grid-column: span 2;">
+            <span class="icon">&#x1F4C8;</span>
+            <span>Custom Render</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="panel-header">
+        <span>Layout Tree</span>
+      </div>
+      <div class="panel-content">
+        <div id="hierarchyTree" class="tree-container">
+          <!-- Tree nodes rendered dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Center Viewport: Realistic Watch Simulator -->
+    <section class="center-viewport">
+      <div class="viewport-toolbar">
+        <div class="toolbar-group">
+          <span style="font-size: 11px; font-weight: 600; color: var(--text-muted);">ZOOM:</span>
+          <button class="btn-secondary zoom-btn" data-zoom="1">1x</button>
+          <button class="btn-primary zoom-btn" data-zoom="2">2x</button>
+          <button class="btn-secondary zoom-btn" data-zoom="3">3x</button>
+        </div>
+
+        <div class="toolbar-group">
+          <label style="font-size: 12px; color: var(--text-bright); display: flex; align-items: center; gap: 5px; cursor: pointer;">
+            <input type="checkbox" id="chkWidgets" checked>
+            <span>Widgets Bar (24px)</span>
+          </label>
+          <label style="font-size: 12px; color: var(--text-bright); display: flex; align-items: center; gap: 5px; cursor: pointer; margin-left: 10px;">
+            <input type="checkbox" id="chkDebugBounds">
+            <span>Debug Bounds</span>
+          </label>
+          <label style="font-size: 12px; color: var(--text-bright); display: flex; align-items: center; gap: 5px; cursor: pointer; margin-left: 10px;">
+            <input type="checkbox" id="chk3BitColor">
+            <span>3-Bit LCD Colors</span>
+          </label>
+          <label style="font-size: 12px; color: var(--text-bright); display: flex; align-items: center; gap: 5px; cursor: pointer; margin-left: 10px;">
+            <input type="checkbox" id="chkPixelGrid">
+            <span>LCD Grid</span>
+          </label>
+          <button id="btnThemeToggle" class="btn-secondary" style="margin-left: 10px;" title="Toggle Watch Theme">
+            Theme
+          </button>
+        </div>
+      </div>
+
+      <!-- Simulator Stage -->
+      <div class="simulator-stage">
+        <div class="bangle-watch">
+          <div class="watch-strap-top"></div>
+          <div class="watch-case">
+            <div id="physicalWatchBtn" class="physical-btn" title="Physical Watch Button (BTN1)"></div>
+            <div class="watch-screen-bezel">
+              <canvas id="bangleCanvas" width="176" height="176"></canvas>
+              <div class="screen-glare"></div>
+            </div>
+          </div>
+          <div class="watch-strap-bottom"></div>
+        </div>
+        <div id="coordBadge" class="coord-badge">X: 0  Y: 0</div>
+      </div>
+
+      <!-- Bottom Activity Console -->
+      <div id="activityConsole" class="activity-console">
+        <div class="console-entry info">[System] Bangle.js 2 UI Designer ready (176x176 LPM013M126 Memory LCD).</div>
+      </div>
+    </section>
+
+    <!-- Right Panel: Property Inspector & Code Generation -->
+    <section class="panel right-panel">
+      <div class="tabs-nav">
+        <button class="tab-btn active" data-tab="tabInspector">Properties</button>
+        <button class="tab-btn" data-tab="tabCode">Espruino Code</button>
+        <button class="tab-btn" data-tab="tabAppMeta">App Info</button>
+      </div>
+
+      <!-- Tab: Properties -->
+      <div id="tabInspector" class="tab-content active">
+        <div id="noSelectionNotice" style="color: var(--text-muted); font-size: 12px; text-align: center; margin-top: 40px; display: none;">
+          Select an element in the Layout Tree or click on the watch screen to inspect its properties.
+        </div>
+
+        <div id="propertyForm">
+          <div style="font-size: 11px; font-weight: 700; color: var(--accent-cyan); text-transform: uppercase; margin-bottom: 12px;">
+            Selected: <span id="inspectorNodeType" style="color: var(--text-bright);">TEXT</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">ID (for layout.name access)</label>
+            <input type="text" id="prop_id" class="form-control" placeholder="e.g. time, steps, myBtn">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Label / Text</label>
+            <input type="text" id="prop_label" class="form-control" placeholder="Visible text">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Font</label>
+            <select id="prop_font" class="form-control">
+              <option value="6x8">6x8 (Small Bitmap, 6x8px)</option>
+              <option value="6x8:2">6x8:2 (Medium Bitmap, 12x16px)</option>
+              <option value="6x8:3">6x8:3 (Large Bitmap, 18x24px)</option>
+              <option value="12x20">12x20 (Tall Bitmap, 12x20px)</option>
+              <option value="12x20:2">12x20:2 (Large Tall, 24x40px)</option>
+              <option value="Vector:12">Vector 12px</option>
+              <option value="Vector:16">Vector 16px</option>
+              <option value="Vector:20">Vector 20px</option>
+              <option value="Vector:28">Vector 28px</option>
+              <option value="20%">20% Screen Height (Vector ~35px)</option>
+              <option value="25%">25% Screen Height (Vector ~44px)</option>
+              <option value="30%">30% Screen Height (Vector ~53px)</option>
+              <option value="40%">40% Screen Height (Vector ~70px)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Icon / Image</label>
+            <select id="prop_src" class="form-control">
+              <option value="">(None)</option>
+            </select>
+          </div>
+
+          <!-- Color settings -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Foreground (col)</label>
+              <input type="text" id="prop_col" class="form-control" placeholder="#ffffff">
+              <div class="color-swatches">
+                <div class="swatch" data-target="col" data-color="#ffffff" style="background: #ffffff;" title="White"></div>
+                <div class="swatch" data-target="col" data-color="#00ffff" style="background: #00ffff;" title="Cyan"></div>
+                <div class="swatch" data-target="col" data-color="#00ff00" style="background: #00ff00;" title="Green"></div>
+                <div class="swatch" data-target="col" data-color="#ffff00" style="background: #ffff00;" title="Yellow"></div>
+                <div class="swatch" data-target="col" data-color="#ff0055" style="background: #ff0055;" title="Red"></div>
+                <div class="swatch" data-target="col" data-color="#000000" style="background: #000000;" title="Black"></div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Background (bgCol)</label>
+              <input type="text" id="prop_bgCol" class="form-control" placeholder="#000000">
+              <div class="color-swatches">
+                <div class="swatch" data-target="bgCol" data-color="#000000" style="background: #000000;" title="Black"></div>
+                <div class="swatch" data-target="bgCol" data-color="#141e28" style="background: #141e28;" title="Dark Blue"></div>
+                <div class="swatch" data-target="bgCol" data-color="#ffffff" style="background: #ffffff;" title="White"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Button Border</label>
+              <input type="text" id="prop_btnBorderCol" class="form-control" placeholder="#00ffff">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Button Face</label>
+              <input type="text" id="prop_btnFaceCol" class="form-control" placeholder="#141e28">
+            </div>
+          </div>
+
+          <!-- Flex & Sizing -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Fill X</label>
+              <input type="number" id="prop_fillx" class="form-control" min="0" max="10" placeholder="0 or 1">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Fill Y</label>
+              <input type="number" id="prop_filly" class="form-control" min="0" max="10" placeholder="0 or 1">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Padding</label>
+              <input type="number" id="prop_pad" class="form-control" min="0" max="30" placeholder="px">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Fixed Width</label>
+              <input type="number" id="prop_width" class="form-control" min="0" max="176" placeholder="px">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Fixed Height</label>
+              <input type="number" id="prop_height" class="form-control" min="0" max="176" placeholder="px">
+            </div>
+          </div>
+
+          <!-- Alignment -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Horizontal Align</label>
+              <select id="prop_halign" class="form-control">
+                <option value="-1">Left (-1)</option>
+                <option value="0">Center (0)</option>
+                <option value="1">Right (1)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Vertical Align</label>
+              <select id="prop_valign" class="form-control">
+                <option value="-1">Top (-1)</option>
+                <option value="0">Center (0)</option>
+                <option value="1">Bottom (1)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Wrap & Rotation -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Rotation</label>
+              <select id="prop_r" class="form-control">
+                <option value="0">0&deg; (Normal)</option>
+                <option value="1">90&deg; Clockwise</option>
+                <option value="2">180&deg; Upside Down</option>
+                <option value="3">270&deg; Counter-Clockwise</option>
+              </select>
+            </div>
+            <div class="form-group" style="display: flex; align-items: center; margin-top: 18px;">
+              <label style="font-size: 12px; color: var(--text-bright); display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                <input type="checkbox" id="prop_wrap">
+                <span>Wrap Text</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Position & Arrangement -->
+          <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-color);">
+            <div style="font-size: 11px; font-weight: 700; color: var(--accent-cyan); text-transform: uppercase; margin-bottom: 8px;">
+              Position & Arrangement
+            </div>
+            <div class="form-row" style="margin-bottom: 8px;">
+              <button id="btnMoveUp" class="btn-secondary" style="justify-content: center;" title="Move earlier in parent container">
+                <span>&#x25B2;</span> Move Up
+              </button>
+              <button id="btnMoveDown" class="btn-secondary" style="justify-content: center;" title="Move later in parent container">
+                <span>&#x25BC;</span> Move Down
+              </button>
+            </div>
+            <div class="form-row">
+              <button id="btnWrapRow" class="btn-secondary" style="justify-content: center;" title="Wrap this element in a new Horizontal Row">
+                <span>&#x2194;</span> Wrap in Row
+              </button>
+              <button id="btnWrapCol" class="btn-secondary" style="justify-content: center;" title="Wrap this element in a new Vertical Column">
+                <span>&#x2195;</span> Wrap in Column
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Espruino Code Output -->
+      <div id="tabCode" class="tab-content">
+        <div class="code-viewer-container">
+          <div class="code-viewer-toolbar">
+            <span style="font-size: 11px; font-weight: 600; color: var(--text-muted);">JAVASCRIPT (ESPRUINO)</span>
+            <div style="display: flex; gap: 6px;">
+              <button id="btnCopyCode" class="btn-secondary" style="padding: 2px 8px; font-size: 11px;">Copy</button>
+              <button id="btnDownloadJs" class="btn-secondary" style="padding: 2px 8px; font-size: 11px;">Download .js</button>
+              <button id="btnOpenWebIde" class="btn-primary" style="padding: 2px 8px; font-size: 11px;">Open in Web IDE</button>
+            </div>
+          </div>
+          <textarea id="codeViewer" class="code-textarea" readonly spellcheck="false"></textarea>
+        </div>
+      </div>
+
+      <!-- Tab: App Metadata -->
+      <div id="tabAppMeta" class="tab-content">
+        <div class="form-group">
+          <label class="form-label">Application Name</label>
+          <input type="text" id="meta_name" class="form-control" value="My Bangle App">
+        </div>
+        <div class="form-group">
+          <label class="form-label">App ID (lowercase, &lt;15 chars)</label>
+          <input type="text" id="meta_id" class="form-control" value="myapp">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Version</label>
+          <input type="text" id="meta_version" class="form-control" value="0.01">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <input type="text" id="meta_description" class="form-control" value="Created with Bangle.js 2 UI Studio">
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Templates Modal -->
+  <div id="templatesModal" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span>Bangle.js 2 Starter Templates</span>
+        <button id="btnCloseTemplatesModal" style="background: none; border: none; color: #fff; font-size: 18px; cursor: pointer;">&times;</button>
+      </div>
+      <div class="modal-body" id="templatesList">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Import Modal -->
+  <div id="importModal" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span>Import Existing Layout Code</span>
+        <button id="btnCloseImportModal" style="background: none; border: none; color: #fff; font-size: 18px; cursor: pointer;">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">
+          Paste your existing JavaScript code containing <code>new Layout({...})</code> or a layout object:
+        </p>
+        <textarea id="importCodeArea" class="form-control" style="height: 180px; font-family: var(--font-mono); font-size: 11px; white-space: pre;"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button id="btnDoImport" class="btn-primary">Load into Designer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/icons.js"></script>
+  <script src="js/layout-engine.js"></script>
+  <script src="js/bangle-display.js"></script>
+  <script src="js/menu-engine.js"></script>
+  <script src="js/templates.js"></script>
+  <script src="js/code-generator.js"></script>
+  <script src="js/code-importer.js"></script>
+  <script src="js/web-bluetooth.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
+
